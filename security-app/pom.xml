@@ -14,5 +14,12 @@
 
     <description>APP Security Components</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.dream.start</groupId>
+            <artifactId>security-core</artifactId>
+            <version>${dream.start.security.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>

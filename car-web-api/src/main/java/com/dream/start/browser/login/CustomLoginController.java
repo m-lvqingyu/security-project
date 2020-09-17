@@ -1,4 +1,4 @@
-package com.dream.start.main;
+package com.dream.start.browser.login;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author lvqingyu
  */
 @Controller
-public class IndexController {
+public class CustomLoginController {
 
-    @RequestMapping({"/index","/",""})
-    public String index(){
-        return "index";
+    @RequestMapping("/login/page")
+    public String login(){
+        return "login";
     }
 }

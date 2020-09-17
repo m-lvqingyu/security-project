@@ -1,4 +1,4 @@
-package com.dream.start;
+package com.dream.start.browser;
 
 /**
  * Create By 2020/9/13

@@ -1,4 +1,4 @@
-package com.dream.start.browser.core;
+package com.dream.start.browser.core.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

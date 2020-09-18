@@ -1,5 +1,7 @@
 package com.dream.start.browser.config;
 
+import com.dream.start.browser.authentication.BrowserAuthenticationFailureHandler;
+import com.dream.start.browser.authentication.BrowserAuthenticationSuccessHandler;
 import com.dream.start.browser.properties.BrowserLoginProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +27,10 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private BrowserLoginProperties browserProperties;
-
+    @Autowired
+    private BrowserAuthenticationFailureHandler browserAuthenticationFailureHandler;
+    @Autowired
+    private BrowserAuthenticationSuccessHandler browserAuthenticationSuccessHandler;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -54,11 +59,18 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         String defaultLoginPage = browserProperties.getLoginPage();
+        String defaultCodeImage = browserProperties.getCodeImage();
         String defaultLoginProcessingUrl = browserProperties.getLoginProcessingUrl();
         String defaultLoginUserName = browserProperties.getLoginUserName();
         String defaultLoginPassword = browserProperties.getLoginPassword();
-        http.formLogin().loginPage(defaultLoginPage).loginProcessingUrl(defaultLoginProcessingUrl).usernameParameter(defaultLoginUserName).passwordParameter(defaultLoginPassword)
-                .and().authorizeRequests().antMatchers(defaultLoginPage).permitAll()
+        http.formLogin()
+                .loginPage(defaultLoginPage)
+                .loginProcessingUrl(defaultLoginProcessingUrl)
+                .usernameParameter(defaultLoginUserName)
+                .passwordParameter(defaultLoginPassword)
+                .successHandler(browserAuthenticationSuccessHandler)
+                .failureHandler(browserAuthenticationFailureHandler)
+                .and().authorizeRequests().antMatchers(defaultLoginPage, defaultCodeImage).permitAll()
                 .anyRequest().authenticated().and().csrf().disable();
     }
 }

@@ -1,5 +1,6 @@
 package com.dream.start.browser.properties;
 
+import com.dream.start.browser.core.enums.LoginResponseType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -21,6 +22,8 @@ public class BrowserLoginProperties {
 
     private static final String[] DEFAULT_IGNORING_MATCHERS_PATH = {"/dist/**", "/modules/**", "/plugins/**"};
 
+    private static final String DEFAULT_CODE_IMAGE = "/code/image";
+
     private String loginPage = DEFAULT_LOGIN_PAGE;
 
     private String loginProcessingUrl = DEFAULT_LOGIN_PROCESSING_URL;
@@ -31,6 +34,9 @@ public class BrowserLoginProperties {
 
     private String[] ignoringMatchersPath = DEFAULT_IGNORING_MATCHERS_PATH;
 
+    private LoginResponseType loginType = LoginResponseType.REDIRECT;
+
+    private String codeImage = DEFAULT_CODE_IMAGE;
 
     public String getLoginPage() {
         return loginPage;
@@ -70,5 +76,21 @@ public class BrowserLoginProperties {
 
     public void setIgnoringMatchersPath(String[] ignoringMatchersPath) {
         this.ignoringMatchersPath = ignoringMatchersPath;
+    }
+
+    public LoginResponseType getLoginType() {
+        return loginType;
+    }
+
+    public void setLoginType(LoginResponseType loginType) {
+        this.loginType = loginType;
+    }
+
+    public String getCodeImage() {
+        return codeImage;
+    }
+
+    public void setCodeImage(String codeImage) {
+        this.codeImage = codeImage;
     }
 }

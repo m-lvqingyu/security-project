@@ -1,6 +1,6 @@
 package com.dream.start.browser.config;
 
-import com.dream.start.browser.properties.BrowserProperties;
+import com.dream.start.browser.properties.BrowserLoginProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private BrowserProperties browserProperties;
+    private BrowserLoginProperties browserProperties;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -53,10 +53,10 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String defaultLoginPage = browserProperties.getDefaultLoginPage();
-        String defaultLoginProcessingUrl = browserProperties.getDefaultLoginProcessingUrl();
-        String defaultLoginUserName = browserProperties.getDefaultLoginUserName();
-        String defaultLoginPassword = browserProperties.getDefaultLoginPassword();
+        String defaultLoginPage = browserProperties.getLoginPage();
+        String defaultLoginProcessingUrl = browserProperties.getLoginProcessingUrl();
+        String defaultLoginUserName = browserProperties.getLoginUserName();
+        String defaultLoginPassword = browserProperties.getLoginPassword();
         http.formLogin().loginPage(defaultLoginPage).loginProcessingUrl(defaultLoginProcessingUrl).usernameParameter(defaultLoginUserName).passwordParameter(defaultLoginPassword)
                 .and().authorizeRequests().antMatchers(defaultLoginPage).permitAll()
                 .anyRequest().authenticated().and().csrf().disable();

@@ -1,24 +1,21 @@
 package com.dream.start.browser.login;
 
-import cn.hutool.core.util.RandomUtil;
 import com.dream.start.browser.core.code.bo.ImageCodeBO;
 import com.dream.start.browser.core.code.service.ValidateCodeService;
-import com.dream.start.browser.core.utils.MD5Util;
-import com.dream.start.browser.core.utils.ResultUtil;
+import com.dream.start.browser.core.constant.BrowserSomeConstant;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.UUID;
 
 /**
  * Create By 2020/9/13
@@ -34,21 +31,24 @@ public class CustomLoginController {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private static final String SESSION_IMAGE_CODE_KEY = "SESSION_IMAGE_CODE_KEY";
 
     @RequestMapping(value = "/login/page", method = RequestMethod.GET)
-    public String login(HttpServletRequest request, HttpServletResponse response){
+    public String login(HttpServletRequest request, HttpServletResponse response) {
         return "login";
+    }
+
+    @RequestMapping(value = "/mobile/page", method = RequestMethod.GET)
+    public String mobileLogin(HttpServletRequest request, HttpServletResponse response){
+        return "login-mobile";
     }
 
     @RequestMapping(value = "/code/image", method = RequestMethod.GET)
     public void codeImage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ImageCodeBO imageCode = validateCodeService.createImageCode();
-        String code = imageCode.getCode();
         BufferedImage image = imageCode.getImage();
-        request.getSession().setAttribute(SESSION_IMAGE_CODE_KEY, code);
+        request.getSession().setAttribute(BrowserSomeConstant.SESSION_IMAGE_CODE_KEY, imageCode);
         ServletOutputStream outputStream = response.getOutputStream();
-        ImageIO.write(image, "jpg", outputStream);
+        ImageIO.write(image, BrowserSomeConstant.IMAGE_JPG_FORMAT_NAME, outputStream);
     }
 
 }

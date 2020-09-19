@@ -24,6 +24,8 @@ public class BrowserLoginProperties {
 
     private static final String DEFAULT_CODE_IMAGE = "/code/image";
 
+    private static final String DEFAULT_MOBILE_LOGIN_URL = "/mobile/page";
+
     private String loginPage = DEFAULT_LOGIN_PAGE;
 
     private String loginProcessingUrl = DEFAULT_LOGIN_PROCESSING_URL;
@@ -37,6 +39,16 @@ public class BrowserLoginProperties {
     private LoginResponseType loginType = LoginResponseType.REDIRECT;
 
     private String codeImage = DEFAULT_CODE_IMAGE;
+
+    private String mobileLoginUrl = DEFAULT_MOBILE_LOGIN_URL;
+
+    public String getMobileLoginUrl() {
+        return mobileLoginUrl;
+    }
+
+    public void setMobileLoginUrl(String mobileLoginUrl) {
+        this.mobileLoginUrl = mobileLoginUrl;
+    }
 
     public String getLoginPage() {
         return loginPage;

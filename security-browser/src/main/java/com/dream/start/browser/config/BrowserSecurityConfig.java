@@ -2,7 +2,9 @@ package com.dream.start.browser.config;
 
 import com.dream.start.browser.authentication.BrowserAuthenticationFailureHandler;
 import com.dream.start.browser.authentication.BrowserAuthenticationSuccessHandler;
+import com.dream.start.browser.filter.ImageCodeValidateFilter;
 import com.dream.start.browser.properties.BrowserLoginProperties;
+import com.dream.start.browser.service.BrowserUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Create By 2020/9/13
@@ -31,6 +34,11 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     private BrowserAuthenticationFailureHandler browserAuthenticationFailureHandler;
     @Autowired
     private BrowserAuthenticationSuccessHandler browserAuthenticationSuccessHandler;
+    @Autowired
+    private ImageCodeValidateFilter imageCodeValidateFilter;
+    @Autowired
+    private BrowserUserDetailsService browserUserDetailsService;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -46,9 +54,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // 用户信息存储在内存中 admin - 1234
-        String password = passwordEncoder().encode("1234");
-        auth.inMemoryAuthentication().withUser("admin").password(password).authorities("ADMIN");
+        auth.userDetailsService(browserUserDetailsService);
     }
 
     @Override
@@ -60,17 +66,19 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         String defaultLoginPage = browserProperties.getLoginPage();
         String defaultCodeImage = browserProperties.getCodeImage();
+        String defaultMobileLoginUrl = browserProperties.getMobileLoginUrl();
         String defaultLoginProcessingUrl = browserProperties.getLoginProcessingUrl();
         String defaultLoginUserName = browserProperties.getLoginUserName();
         String defaultLoginPassword = browserProperties.getLoginPassword();
-        http.formLogin()
+        http.addFilterBefore(imageCodeValidateFilter, UsernamePasswordAuthenticationFilter.class)
+                .formLogin()
                 .loginPage(defaultLoginPage)
                 .loginProcessingUrl(defaultLoginProcessingUrl)
                 .usernameParameter(defaultLoginUserName)
                 .passwordParameter(defaultLoginPassword)
                 .successHandler(browserAuthenticationSuccessHandler)
                 .failureHandler(browserAuthenticationFailureHandler)
-                .and().authorizeRequests().antMatchers(defaultLoginPage, defaultCodeImage).permitAll()
+                .and().authorizeRequests().antMatchers(defaultLoginPage, defaultCodeImage, defaultMobileLoginUrl).permitAll()
                 .anyRequest().authenticated().and().csrf().disable();
     }
 }

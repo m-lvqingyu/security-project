@@ -34,32 +34,21 @@ public class CustomLoginController {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private static final String BASE_CHECK_CODES = "qwertyuiplkjhgfdsazxcvbnmQWERTYUPLKJHGFDSAZXCVBNM1234567890";
+    private static final String SESSION_IMAGE_CODE_KEY = "SESSION_IMAGE_CODE_KEY";
 
     @RequestMapping(value = "/login/page", method = RequestMethod.GET)
-    public String login(){
+    public String login(HttpServletRequest request, HttpServletResponse response){
         return "login";
     }
 
-    @ResponseBody
     @RequestMapping(value = "/code/image", method = RequestMethod.GET)
-    public String codeImage(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void codeImage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ImageCodeBO imageCode = validateCodeService.createImageCode();
-
         String code = imageCode.getCode();
         BufferedImage image = imageCode.getImage();
-        HttpSession session = request.getSession();
-
+        request.getSession().setAttribute(SESSION_IMAGE_CODE_KEY, code);
         ServletOutputStream outputStream = response.getOutputStream();
         ImageIO.write(image, "jpg", outputStream);
-
-        String sessionKeyPrefix = RandomUtil.randomString(BASE_CHECK_CODES,4);
-        String lowerCaseCode = sessionKeyPrefix.toLowerCase() + UUID.randomUUID();
-        String realKey = MD5Util.MD5Encode(lowerCaseCode , "UTF-8");
-        log.info("[获取验证码]-realkey:{}", realKey);
-        session.setAttribute(realKey, code);
-        ResultUtil<String> success = ResultUtil.success(realKey);
-        return objectMapper.writeValueAsString(success);
     }
 
 }

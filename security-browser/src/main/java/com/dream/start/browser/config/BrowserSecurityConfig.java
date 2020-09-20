@@ -3,8 +3,10 @@ package com.dream.start.browser.config;
 import com.dream.start.browser.authentication.BrowserAuthenticationFailureHandler;
 import com.dream.start.browser.authentication.BrowserAuthenticationSuccessHandler;
 import com.dream.start.browser.filter.ImageCodeValidateFilter;
+import com.dream.start.browser.filter.SmsCodeValidateFilter;
+import com.dream.start.browser.mobile.MobileAuthenticationConfig;
 import com.dream.start.browser.properties.BrowserLoginProperties;
-import com.dream.start.browser.service.BrowserUserDetailsService;
+import com.dream.start.browser.service.UserNameUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,7 +39,11 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private ImageCodeValidateFilter imageCodeValidateFilter;
     @Autowired
-    private BrowserUserDetailsService browserUserDetailsService;
+    private UserNameUserDetailsService userNameUserDetailsService;
+    @Autowired
+    private SmsCodeValidateFilter smsCodeValidateFilter;
+    @Autowired
+    private MobileAuthenticationConfig mobileAuthenticationConfig;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -54,7 +60,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(browserUserDetailsService);
+        auth.userDetailsService(userNameUserDetailsService);
     }
 
     @Override
@@ -71,7 +77,8 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
         String defaultLoginProcessingUrl = browserProperties.getLoginProcessingUrl();
         String defaultLoginUserName = browserProperties.getLoginUserName();
         String defaultLoginPassword = browserProperties.getLoginPassword();
-        http.addFilterBefore(imageCodeValidateFilter, UsernamePasswordAuthenticationFilter.class)
+        http.addFilterBefore(smsCodeValidateFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(imageCodeValidateFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin()
                 .loginPage(defaultLoginPage)
                 .loginProcessingUrl(defaultLoginProcessingUrl)
@@ -81,5 +88,6 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureHandler(browserAuthenticationFailureHandler)
                 .and().authorizeRequests().antMatchers(defaultLoginPage, defaultCodeImage, defaultMobileLoginUrl, defaultCodeSms).permitAll()
                 .anyRequest().authenticated().and().csrf().disable();
+        http.apply(mobileAuthenticationConfig);
     }
 }

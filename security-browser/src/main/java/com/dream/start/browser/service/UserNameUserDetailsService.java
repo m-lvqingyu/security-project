@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
  * @author lvqingyu
  */
 @Slf4j
-@Component("browserUserDetailsService")
-public class BrowserUserDetailsService implements UserDetailsService {
+@Component("userNameUserDetailsService")
+public class UserNameUserDetailsService implements UserDetailsService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;

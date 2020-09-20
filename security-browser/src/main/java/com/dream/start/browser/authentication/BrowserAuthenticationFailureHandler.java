@@ -5,6 +5,7 @@ import com.dream.start.browser.core.enums.LoginResponseType;
 import com.dream.start.browser.core.utils.ResultUtil;
 import com.dream.start.browser.properties.BrowserLoginProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -39,7 +40,9 @@ public class BrowserAuthenticationFailureHandler extends SimpleUrlAuthentication
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(objectMapper.writeValueAsString(failure));
         } else {
-            super.setDefaultFailureUrl(browserLoginProperties.getLoginPage() + "?error");
+            String referer = request.getHeader("Referer");
+            String lastUrl = StringUtils.substringBefore(referer, "?");
+            super.setDefaultFailureUrl(lastUrl + "?error");
             super.onAuthenticationFailure(request, response, exception);
         }
     }

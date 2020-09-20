@@ -67,6 +67,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
         String defaultLoginPage = browserProperties.getLoginPage();
         String defaultCodeImage = browserProperties.getCodeImage();
         String defaultMobileLoginUrl = browserProperties.getMobileLoginUrl();
+        String defaultCodeSms = browserProperties.getCodeSms();
         String defaultLoginProcessingUrl = browserProperties.getLoginProcessingUrl();
         String defaultLoginUserName = browserProperties.getLoginUserName();
         String defaultLoginPassword = browserProperties.getLoginPassword();
@@ -78,7 +79,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordParameter(defaultLoginPassword)
                 .successHandler(browserAuthenticationSuccessHandler)
                 .failureHandler(browserAuthenticationFailureHandler)
-                .and().authorizeRequests().antMatchers(defaultLoginPage, defaultCodeImage, defaultMobileLoginUrl).permitAll()
+                .and().authorizeRequests().antMatchers(defaultLoginPage, defaultCodeImage, defaultMobileLoginUrl, defaultCodeSms).permitAll()
                 .anyRequest().authenticated().and().csrf().disable();
     }
 }

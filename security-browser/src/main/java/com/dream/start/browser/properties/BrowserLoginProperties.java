@@ -26,6 +26,10 @@ public class BrowserLoginProperties {
 
     private static final String DEFAULT_MOBILE_LOGIN_URL = "/mobile/page";
 
+    private static final String DEFAULT_CODE_SMS = "/code/mobile";
+
+    private static final String DEFAULT_MOBILE_FORM = "/mobile/form";
+
     private String loginPage = DEFAULT_LOGIN_PAGE;
 
     private String loginProcessingUrl = DEFAULT_LOGIN_PROCESSING_URL;
@@ -41,6 +45,26 @@ public class BrowserLoginProperties {
     private String codeImage = DEFAULT_CODE_IMAGE;
 
     private String mobileLoginUrl = DEFAULT_MOBILE_LOGIN_URL;
+
+    private String codeSms = DEFAULT_CODE_SMS;
+
+    private String mobileForm = DEFAULT_MOBILE_FORM;
+
+    public String getMobileForm() {
+        return mobileForm;
+    }
+
+    public void setMobileForm(String mobileForm) {
+        this.mobileForm = mobileForm;
+    }
+
+    public String getCodeSms() {
+        return codeSms;
+    }
+
+    public void setCodeSms(String codeSms) {
+        this.codeSms = codeSms;
+    }
 
     public String getMobileLoginUrl() {
         return mobileLoginUrl;

@@ -37,11 +37,6 @@ public class CustomLoginController {
         return "login";
     }
 
-    @RequestMapping(value = "/mobile/page", method = RequestMethod.GET)
-    public String mobileLogin(HttpServletRequest request, HttpServletResponse response){
-        return "login-mobile";
-    }
-
     @RequestMapping(value = "/code/image", method = RequestMethod.GET)
     public void codeImage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ImageCodeBO imageCode = validateCodeService.createImageCode();

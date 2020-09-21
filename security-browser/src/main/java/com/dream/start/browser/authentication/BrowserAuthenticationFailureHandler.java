@@ -40,8 +40,9 @@ public class BrowserAuthenticationFailureHandler extends SimpleUrlAuthentication
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(objectMapper.writeValueAsString(failure));
         } else {
+            Object toAuthentication = request.getAttribute("toAuthentication");
             String referer = request.getHeader("Referer");
-            String lastUrl = StringUtils.substringBefore(referer, "?");
+            String lastUrl = toAuthentication != null ? browserLoginProperties.getLoginPage() : StringUtils.substringBefore(referer, "?");
             super.setDefaultFailureUrl(lastUrl + "?error");
             super.onAuthenticationFailure(request, response, exception);
         }

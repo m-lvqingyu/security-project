@@ -7,6 +7,8 @@ import com.dream.start.browser.filter.SmsCodeValidateFilter;
 import com.dream.start.browser.mobile.MobileAuthenticationConfig;
 import com.dream.start.browser.properties.BrowserLoginProperties;
 import com.dream.start.browser.service.UserNameUserDetailsService;
+import com.dream.start.browser.session.BrowserExpiredSessionStrategy;
+import com.dream.start.browser.session.BrowserInvalidSessionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +20,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.session.InvalidSessionStrategy;
 
 /**
  * Create By 2020/9/13
@@ -44,6 +47,10 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     private SmsCodeValidateFilter smsCodeValidateFilter;
     @Autowired
     private MobileAuthenticationConfig mobileAuthenticationConfig;
+    @Autowired
+    private BrowserInvalidSessionStrategy browserInvalidSessionStrategy;
+    @Autowired
+    private BrowserExpiredSessionStrategy browserExpiredSessionStrategy;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -87,7 +94,14 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(browserAuthenticationSuccessHandler)
                 .failureHandler(browserAuthenticationFailureHandler)
                 .and().authorizeRequests().antMatchers(defaultLoginPage, defaultCodeImage, defaultMobileLoginUrl, defaultCodeSms).permitAll()
-                .anyRequest().authenticated().and().csrf().disable();
+                .anyRequest().authenticated()
+                .and()
+                // Session失效后处理
+                .sessionManagement().invalidSessionStrategy(browserInvalidSessionStrategy)
+                // 同一用户只能在一台计算机上登录
+                .maximumSessions(1).expiredSessionStrategy(browserExpiredSessionStrategy)
+                // 同一用户只能在一台计算机上登录，未退出时，不允许登录
+                .maxSessionsPreventsLogin(true);
         http.apply(mobileAuthenticationConfig);
     }
 }

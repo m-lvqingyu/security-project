@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.stereotype.Component;
 
 /**
@@ -37,6 +38,10 @@ public class MobileAuthenticationConfig extends SecurityConfigurerAdapter<Defaul
     @Override
     public void configure(HttpSecurity builder) throws Exception {
         MobileAuthenticationFilter mobileAuthenticationFilter = new MobileAuthenticationFilter();
+        // 解决正常应该是同一个用户，系统中只能用用户名或手机号登录一次的问题
+        // MobileAuthenticationFilter 继承自 AbstractAuthenticationProcessingFilter，SessionAuthenticationStrategy使用的是NullAuthenticatedSessionStrategy
+        // 所以与用户名和密码登录，使用CompositeSessionAuthenticationStrategy即可
+        mobileAuthenticationFilter.setSessionAuthenticationStrategy(builder.getSharedObject(SessionAuthenticationStrategy.class));
         mobileAuthenticationFilter.setAuthenticationManager(builder.getSharedObject(AuthenticationManager.class));
         mobileAuthenticationFilter.setAuthenticationSuccessHandler(browserAuthenticationSuccessHandler);
         mobileAuthenticationFilter.setAuthenticationFailureHandler(browserAuthenticationFailureHandler);

@@ -1,5 +1,6 @@
-package com.dream.start.browser.properties;
+package com.dream.start.browser.core.config;
 
+import com.dream.start.browser.core.properties.LoginProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * @create: 2020/09/18 09:58
  */
 @Configuration
-@EnableConfigurationProperties(BrowserLoginProperties.class)
-public class EnableConfigBrowserProperties {
+@EnableConfigurationProperties(LoginProperties.class)
+public class EnablePropertiesConfig {
 
 }

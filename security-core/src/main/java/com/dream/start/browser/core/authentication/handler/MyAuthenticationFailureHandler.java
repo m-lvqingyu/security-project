@@ -1,9 +1,9 @@
-package com.dream.start.browser.authentication;
+package com.dream.start.browser.core.authentication.handler;
 
 import com.dream.start.browser.core.constant.ResultUtilsConstant;
 import com.dream.start.browser.core.enums.LoginResponseType;
+import com.dream.start.browser.core.properties.LoginProperties;
 import com.dream.start.browser.core.utils.ResultUtil;
-import com.dream.start.browser.properties.BrowserLoginProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,28 +22,37 @@ import java.io.IOException;
  * @author: Lvqingyu
  * @create: 2020/09/18 15:17
  */
-@Component("browserAuthenticationFailureHandler")
-public class BrowserAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
+@Component("myAuthenticationFailureHandler")
+public class MyAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
+
+    private final ObjectMapper objectMapper;
+    private final LoginProperties loginProperties;
 
     @Autowired
-    private BrowserLoginProperties browserLoginProperties;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
+    public MyAuthenticationFailureHandler(LoginProperties loginProperties, ObjectMapper objectMapper){
+        this.objectMapper = objectMapper;
+        this.loginProperties = loginProperties;
+    }
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        LoginResponseType loginType = browserLoginProperties.getLoginType();
+        LoginResponseType loginType = loginProperties.getLoginType();
         if(LoginResponseType.JSON.equals(loginType)){
             ResultUtil<String> failure = ResultUtil.failure(ResultUtilsConstant.AUTHENTICATION_FAILURE);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(objectMapper.writeValueAsString(failure));
         } else {
             Object toAuthentication = request.getAttribute("toAuthentication");
+            String loginPage = loginProperties.getLoginPage();
             String referer = request.getHeader("Referer");
-            String lastUrl = toAuthentication != null ? browserLoginProperties.getLoginPage() : StringUtils.substringBefore(referer, "?");
-            super.setDefaultFailureUrl(lastUrl + "?error");
+            if(toAuthentication != null){
+                super.setDefaultFailureUrl(loginPage + "?error");
+            } else if(StringUtils.isBlank(referer)) {
+                super.setDefaultFailureUrl(loginPage);
+            } else {
+                referer = StringUtils.substringBefore(referer, "?");
+                super.setDefaultFailureUrl(referer + "?error");
+            }
             super.onAuthenticationFailure(request, response, exception);
         }
     }

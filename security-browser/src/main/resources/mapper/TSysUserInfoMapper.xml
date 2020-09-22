@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dream.start.browser.system.mapper.TSysUserInfoMapper">
+  <resultMap id="BaseResultMap" type="com.dream.start.browser.system.pojo.TSysUserInfo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="realname" jdbcType="VARCHAR" property="realname" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="avatar" jdbcType="VARCHAR" property="avatar" />
+    <result column="birthday" jdbcType="TIMESTAMP" property="birthday" />
+    <result column="sex" jdbcType="BIT" property="sex" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="org_code" jdbcType="VARCHAR" property="orgCode" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="del_flag" jdbcType="BIT" property="delFlag" />
+    <result column="third_id" jdbcType="VARCHAR" property="thirdId" />
+    <result column="third_type" jdbcType="VARCHAR" property="thirdType" />
+    <result column="activiti_sync" jdbcType="BIT" property="activitiSync" />
+    <result column="work_no" jdbcType="VARCHAR" property="workNo" />
+    <result column="user_identity" jdbcType="BIT" property="userIdentity" />
+    <result column="post" jdbcType="VARCHAR" property="post" />
+    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, username, realname, `password`, avatar, birthday, sex, email, phone, org_code,
+    `status`, del_flag, third_id, third_type, activiti_sync, work_no, user_identity,
+    post, telephone, create_by, create_time, update_by, update_time
+  </sql>
+  <select id="selectByExample" parameterType="com.dream.start.browser.system.pojo.TSysUserInfoExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_sys_user_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="limit != null">
+      <if test="offset != null">
+        limit ${offset}, ${limit}
+      </if>
+      <if test="offset == null">
+        limit ${limit}
+      </if>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_sys_user_info
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_sys_user_info
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.dream.start.browser.system.pojo.TSysUserInfoExample">
+    delete from t_sys_user_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.dream.start.browser.system.pojo.TSysUserInfo" useGeneratedKeys="true">
+    insert into t_sys_user_info (username, realname, `password`,
+      avatar, birthday, sex,
+      email, phone, org_code,
+      `status`, del_flag, third_id, third_type,
+      activiti_sync, work_no, user_identity,
+      post, telephone, create_by,
+      create_time, update_by, update_time
+      )
+    values (#{username,jdbcType=VARCHAR}, #{realname,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+      #{avatar,jdbcType=VARCHAR}, #{birthday,jdbcType=TIMESTAMP}, #{sex,jdbcType=BIT},
+      #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR},
+      #{status,jdbcType=BIT}, #{delFlag,jdbcType=BIT}, #{thirdId,jdbcType=VARCHAR}, #{thirdType,jdbcType=VARCHAR},
+      #{activitiSync,jdbcType=BIT}, #{workNo,jdbcType=VARCHAR}, #{userIdentity,jdbcType=BIT},
+      #{post,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.dream.start.browser.system.pojo.TSysUserInfo" useGeneratedKeys="true">
+    insert into t_sys_user_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="username != null">
+        username,
+      </if>
+      <if test="realname != null">
+        realname,
+      </if>
+      <if test="password != null">
+        `password`,
+      </if>
+      <if test="avatar != null">
+        avatar,
+      </if>
+      <if test="birthday != null">
+        birthday,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="orgCode != null">
+        org_code,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+      <if test="thirdId != null">
+        third_id,
+      </if>
+      <if test="thirdType != null">
+        third_type,
+      </if>
+      <if test="activitiSync != null">
+        activiti_sync,
+      </if>
+      <if test="workNo != null">
+        work_no,
+      </if>
+      <if test="userIdentity != null">
+        user_identity,
+      </if>
+      <if test="post != null">
+        post,
+      </if>
+      <if test="telephone != null">
+        telephone,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="realname != null">
+        #{realname,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null">
+        #{avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null">
+        #{birthday,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=BIT},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null">
+        #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=BIT},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=BIT},
+      </if>
+      <if test="thirdId != null">
+        #{thirdId,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdType != null">
+        #{thirdType,jdbcType=VARCHAR},
+      </if>
+      <if test="activitiSync != null">
+        #{activitiSync,jdbcType=BIT},
+      </if>
+      <if test="workNo != null">
+        #{workNo,jdbcType=VARCHAR},
+      </if>
+      <if test="userIdentity != null">
+        #{userIdentity,jdbcType=BIT},
+      </if>
+      <if test="post != null">
+        #{post,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null">
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.dream.start.browser.system.pojo.TSysUserInfoExample" resultType="java.lang.Long">
+    select count(*) from t_sys_user_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_sys_user_info
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.username != null">
+        username = #{record.username,jdbcType=VARCHAR},
+      </if>
+      <if test="record.realname != null">
+        realname = #{record.realname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.password != null">
+        `password` = #{record.password,jdbcType=VARCHAR},
+      </if>
+      <if test="record.avatar != null">
+        avatar = #{record.avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="record.birthday != null">
+        birthday = #{record.birthday,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.sex != null">
+        sex = #{record.sex,jdbcType=BIT},
+      </if>
+      <if test="record.email != null">
+        email = #{record.email,jdbcType=VARCHAR},
+      </if>
+      <if test="record.phone != null">
+        phone = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orgCode != null">
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null">
+        `status` = #{record.status,jdbcType=BIT},
+      </if>
+      <if test="record.delFlag != null">
+        del_flag = #{record.delFlag,jdbcType=BIT},
+      </if>
+      <if test="record.thirdId != null">
+        third_id = #{record.thirdId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.thirdType != null">
+        third_type = #{record.thirdType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.activitiSync != null">
+        activiti_sync = #{record.activitiSync,jdbcType=BIT},
+      </if>
+      <if test="record.workNo != null">
+        work_no = #{record.workNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userIdentity != null">
+        user_identity = #{record.userIdentity,jdbcType=BIT},
+      </if>
+      <if test="record.post != null">
+        post = #{record.post,jdbcType=VARCHAR},
+      </if>
+      <if test="record.telephone != null">
+        telephone = #{record.telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createBy != null">
+        create_by = #{record.createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateBy != null">
+        update_by = #{record.updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_sys_user_info
+    set id = #{record.id,jdbcType=VARCHAR},
+      username = #{record.username,jdbcType=VARCHAR},
+      realname = #{record.realname,jdbcType=VARCHAR},
+      `password` = #{record.password,jdbcType=VARCHAR},
+      avatar = #{record.avatar,jdbcType=VARCHAR},
+      birthday = #{record.birthday,jdbcType=TIMESTAMP},
+      sex = #{record.sex,jdbcType=BIT},
+      email = #{record.email,jdbcType=VARCHAR},
+      phone = #{record.phone,jdbcType=VARCHAR},
+      org_code = #{record.orgCode,jdbcType=VARCHAR},
+      `status` = #{record.status,jdbcType=BIT},
+      del_flag = #{record.delFlag,jdbcType=BIT},
+      third_id = #{record.thirdId,jdbcType=VARCHAR},
+      third_type = #{record.thirdType,jdbcType=VARCHAR},
+      activiti_sync = #{record.activitiSync,jdbcType=BIT},
+      work_no = #{record.workNo,jdbcType=VARCHAR},
+      user_identity = #{record.userIdentity,jdbcType=BIT},
+      post = #{record.post,jdbcType=VARCHAR},
+      telephone = #{record.telephone,jdbcType=VARCHAR},
+      create_by = #{record.createBy,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_by = #{record.updateBy,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.dream.start.browser.system.pojo.TSysUserInfo">
+    update t_sys_user_info
+    <set>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="realname != null">
+        realname = #{realname,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        `password` = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null">
+        avatar = #{avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null">
+        birthday = #{birthday,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=BIT},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null">
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=BIT},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=BIT},
+      </if>
+      <if test="thirdId != null">
+        third_id = #{thirdId,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdType != null">
+        third_type = #{thirdType,jdbcType=VARCHAR},
+      </if>
+      <if test="activitiSync != null">
+        activiti_sync = #{activitiSync,jdbcType=BIT},
+      </if>
+      <if test="workNo != null">
+        work_no = #{workNo,jdbcType=VARCHAR},
+      </if>
+      <if test="userIdentity != null">
+        user_identity = #{userIdentity,jdbcType=BIT},
+      </if>
+      <if test="post != null">
+        post = #{post,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null">
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.dream.start.browser.system.pojo.TSysUserInfo">
+    update t_sys_user_info
+    set username = #{username,jdbcType=VARCHAR},
+      realname = #{realname,jdbcType=VARCHAR},
+      `password` = #{password,jdbcType=VARCHAR},
+      avatar = #{avatar,jdbcType=VARCHAR},
+      birthday = #{birthday,jdbcType=TIMESTAMP},
+      sex = #{sex,jdbcType=BIT},
+      email = #{email,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      org_code = #{orgCode,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=BIT},
+      del_flag = #{delFlag,jdbcType=BIT},
+      third_id = #{thirdId,jdbcType=VARCHAR},
+      third_type = #{thirdType,jdbcType=VARCHAR},
+      activiti_sync = #{activitiSync,jdbcType=BIT},
+      work_no = #{workNo,jdbcType=VARCHAR},
+      user_identity = #{userIdentity,jdbcType=BIT},
+      post = #{post,jdbcType=VARCHAR},
+      telephone = #{telephone,jdbcType=VARCHAR},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

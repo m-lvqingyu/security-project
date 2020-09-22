@@ -1,14 +1,14 @@
 package com.dream.start.browser.config;
 
-import com.dream.start.browser.authentication.BrowserAuthenticationFailureHandler;
-import com.dream.start.browser.authentication.BrowserAuthenticationSuccessHandler;
-import com.dream.start.browser.filter.ImageCodeValidateFilter;
-import com.dream.start.browser.filter.SmsCodeValidateFilter;
+import com.dream.start.browser.core.authentication.filter.ImageCodeValidateFilter;
+import com.dream.start.browser.core.authentication.filter.SmsCodeValidateFilter;
+import com.dream.start.browser.core.authentication.handler.MyAuthenticationFailureHandler;
+import com.dream.start.browser.core.authentication.handler.MyAuthenticationSuccessHandler;
+import com.dream.start.browser.core.properties.LoginProperties;
 import com.dream.start.browser.mobile.MobileAuthenticationConfig;
-import com.dream.start.browser.properties.BrowserLoginProperties;
-import com.dream.start.browser.service.UserNameUserDetailsService;
 import com.dream.start.browser.session.BrowserExpiredSessionStrategy;
 import com.dream.start.browser.session.BrowserInvalidSessionStrategy;
+import com.dream.start.browser.users.UserNameUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.session.InvalidSessionStrategy;
 
 /**
  * Create By 2020/9/13
@@ -33,24 +32,36 @@ import org.springframework.security.web.session.InvalidSessionStrategy;
 @EnableWebSecurity
 public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final LoginProperties loginProperties;
+    private final MyAuthenticationFailureHandler myAuthenticationFailureHandler;
+    private final MyAuthenticationSuccessHandler myAuthenticationSuccessHandler;
+    private final ImageCodeValidateFilter imageCodeValidateFilter;
+    private final UserNameUserDetailsService userNameUserDetailsService;
+    private final SmsCodeValidateFilter smsCodeValidateFilter;
+    private final MobileAuthenticationConfig mobileAuthenticationConfig;
+    private final BrowserInvalidSessionStrategy browserInvalidSessionStrategy;
+    private final BrowserExpiredSessionStrategy browserExpiredSessionStrategy;
+
     @Autowired
-    private BrowserLoginProperties browserProperties;
-    @Autowired
-    private BrowserAuthenticationFailureHandler browserAuthenticationFailureHandler;
-    @Autowired
-    private BrowserAuthenticationSuccessHandler browserAuthenticationSuccessHandler;
-    @Autowired
-    private ImageCodeValidateFilter imageCodeValidateFilter;
-    @Autowired
-    private UserNameUserDetailsService userNameUserDetailsService;
-    @Autowired
-    private SmsCodeValidateFilter smsCodeValidateFilter;
-    @Autowired
-    private MobileAuthenticationConfig mobileAuthenticationConfig;
-    @Autowired
-    private BrowserInvalidSessionStrategy browserInvalidSessionStrategy;
-    @Autowired
-    private BrowserExpiredSessionStrategy browserExpiredSessionStrategy;
+    public BrowserSecurityConfig(LoginProperties loginProperties,
+                                 MyAuthenticationFailureHandler myAuthenticationFailureHandler,
+                                 MyAuthenticationSuccessHandler myAuthenticationSuccessHandler,
+                                 ImageCodeValidateFilter imageCodeValidateFilter,
+                                 UserNameUserDetailsService userNameUserDetailsService,
+                                 SmsCodeValidateFilter smsCodeValidateFilter,
+                                 MobileAuthenticationConfig mobileAuthenticationConfig,
+                                 BrowserInvalidSessionStrategy browserInvalidSessionStrategy,
+                                 BrowserExpiredSessionStrategy browserExpiredSessionStrategy) {
+        this.loginProperties = loginProperties;
+        this.myAuthenticationFailureHandler = myAuthenticationFailureHandler;
+        this.myAuthenticationSuccessHandler = myAuthenticationSuccessHandler;
+        this.imageCodeValidateFilter = imageCodeValidateFilter;
+        this.userNameUserDetailsService = userNameUserDetailsService;
+        this.smsCodeValidateFilter = smsCodeValidateFilter;
+        this.mobileAuthenticationConfig = mobileAuthenticationConfig;
+        this.browserInvalidSessionStrategy = browserInvalidSessionStrategy;
+        this.browserExpiredSessionStrategy = browserExpiredSessionStrategy;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -72,18 +83,18 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers(browserProperties.getIgnoringMatchersPath());
+        web.ignoring().antMatchers(loginProperties.getIgnoringMatchersPath());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String defaultLoginPage = browserProperties.getLoginPage();
-        String defaultCodeImage = browserProperties.getCodeImage();
-        String defaultMobileLoginUrl = browserProperties.getMobileLoginUrl();
-        String defaultCodeSms = browserProperties.getCodeSms();
-        String defaultLoginProcessingUrl = browserProperties.getLoginProcessingUrl();
-        String defaultLoginUserName = browserProperties.getLoginUserName();
-        String defaultLoginPassword = browserProperties.getLoginPassword();
+        String defaultLoginPage = loginProperties.getLoginPage();
+        String defaultCodeImage = loginProperties.getCodeImage();
+        String defaultMobileLoginUrl = loginProperties.getMobileLoginUrl();
+        String defaultCodeSms = loginProperties.getCodeSms();
+        String defaultLoginProcessingUrl = loginProperties.getLoginProcessingUrl();
+        String defaultLoginUserName = loginProperties.getLoginUserName();
+        String defaultLoginPassword = loginProperties.getLoginPassword();
         http.addFilterBefore(smsCodeValidateFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(imageCodeValidateFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin()
@@ -91,8 +102,8 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginProcessingUrl(defaultLoginProcessingUrl)
                 .usernameParameter(defaultLoginUserName)
                 .passwordParameter(defaultLoginPassword)
-                .successHandler(browserAuthenticationSuccessHandler)
-                .failureHandler(browserAuthenticationFailureHandler)
+                .successHandler(myAuthenticationSuccessHandler)
+                .failureHandler(myAuthenticationFailureHandler)
                 .and().authorizeRequests().antMatchers(defaultLoginPage, defaultCodeImage, defaultMobileLoginUrl, defaultCodeSms).permitAll()
                 .anyRequest().authenticated()
                 .and()

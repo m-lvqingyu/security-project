@@ -1,5 +1,6 @@
 package com.dream.start.browser;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author lvqingyu
  */
 @SpringBootApplication
+@MapperScan(basePackages = "com.dream.start.browser.system.mapper")
 public class CarApiApplication {
 
     public static void main(String[] args) {

@@ -1,6 +1,6 @@
 package com.dream.start.browser.session;
 
-import com.dream.start.browser.authentication.BrowserAuthenticationFailureHandler;
+import com.dream.start.browser.core.authentication.handler.MyAuthenticationFailureHandler;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +26,19 @@ import java.io.IOException;
 @Component("browserInvalidSessionStrategy")
 public class BrowserInvalidSessionStrategy implements InvalidSessionStrategy {
 
+    private final MyAuthenticationFailureHandler myAuthenticationFailureHandler;
+
     @Autowired
-    private BrowserAuthenticationFailureHandler browserAuthenticationFailureHandler;
+    public BrowserInvalidSessionStrategy(MyAuthenticationFailureHandler myAuthenticationFailureHandler){
+        this.myAuthenticationFailureHandler = myAuthenticationFailureHandler;
+    }
 
     @Override
     public void onInvalidSessionDetected(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
         cancelCookie(httpServletRequest, httpServletResponse);
         AuthenticationException exception = new AuthenticationServiceException("登录已过期");
         try {
-            browserAuthenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, exception);
+            myAuthenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, exception);
         } catch (ServletException e) {
             log.error("登录过期-服务处理异常，异常信息：{}", Throwables.getStackTraceAsString(e));
         }

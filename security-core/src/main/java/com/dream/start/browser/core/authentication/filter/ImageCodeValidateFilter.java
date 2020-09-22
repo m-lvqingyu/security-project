@@ -1,10 +1,10 @@
-package com.dream.start.browser.filter;
+package com.dream.start.browser.core.authentication.filter;
 
-import com.dream.start.browser.authentication.BrowserAuthenticationFailureHandler;
+import com.dream.start.browser.core.authentication.handler.MyAuthenticationFailureHandler;
 import com.dream.start.browser.core.code.bo.ImageCodeBO;
-import com.dream.start.browser.core.constant.BrowserSomeConstant;
+import com.dream.start.browser.core.constant.BrowserLoginConstant;
 import com.dream.start.browser.core.exception.ValidateCodeException;
-import com.dream.start.browser.properties.BrowserLoginProperties;
+import com.dream.start.browser.core.properties.LoginProperties;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -30,22 +30,34 @@ import java.io.IOException;
 @Component("imageCodeValidateFilter")
 public class ImageCodeValidateFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private BrowserLoginProperties browserLoginProperties;
-    @Autowired
-    private BrowserAuthenticationFailureHandler browserAuthenticationFailureHandler;
+    private final LoginProperties loginProperties;
+    private final MyAuthenticationFailureHandler myAuthenticationFailureHandler;
 
+    @Autowired
+    public ImageCodeValidateFilter(LoginProperties loginProperties, MyAuthenticationFailureHandler myAuthenticationFailureHandler){
+        this.loginProperties = loginProperties;
+        this.myAuthenticationFailureHandler = myAuthenticationFailureHandler;
+    }
+
+    /**
+     * 图形验证码过滤器
+     *
+     * @param httpServletRequest
+     * @param httpServletResponse
+     * @param filterChain
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = httpServletRequest.getRequestURI();
         String method = httpServletRequest.getMethod();
-        String loginProcessingUrl = browserLoginProperties.getLoginProcessingUrl();
-        if(requestURI.equals(loginProcessingUrl) &&
-                method.equalsIgnoreCase(HttpMethod.POST.name())){
+        String loginProcessingUrl = loginProperties.getLoginProcessingUrl();
+        if(requestURI.equals(loginProcessingUrl) && method.equalsIgnoreCase(HttpMethod.POST.name())){
             try {
                 doValidate(httpServletRequest);
             } catch (AuthenticationException e) {
-                browserAuthenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, e);
+                myAuthenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, e);
                 log.error("图形验证码校验失败，异常信息:{}", Throwables.getStackTraceAsString(e));
                 return;
             }
@@ -59,7 +71,7 @@ public class ImageCodeValidateFilter extends OncePerRequestFilter {
             throw new ValidateCodeException("验证码不能为空!");
         }
         HttpSession session = request.getSession();
-        ImageCodeBO imageCodeBO = (ImageCodeBO) session.getAttribute(BrowserSomeConstant.SESSION_IMAGE_CODE_KEY);
+        ImageCodeBO imageCodeBO = (ImageCodeBO) session.getAttribute(BrowserLoginConstant.SESSION_IMAGE_CODE_KEY);
         if(imageCodeBO == null){
             throw new ValidateCodeException("验证码已失效，请重新输入!");
         }
@@ -74,6 +86,7 @@ public class ImageCodeValidateFilter extends OncePerRequestFilter {
         if(!code.equalsIgnoreCase(imageCode)){
             throw new ValidateCodeException("验证码不正确，请重新输入!");
         }
+        session.removeAttribute(BrowserLoginConstant.SESSION_IMAGE_CODE_KEY);
     }
 
 }

@@ -1,9 +1,9 @@
-package com.dream.start.browser.filter;
+package com.dream.start.browser.core.authentication.filter;
 
-import com.dream.start.browser.authentication.BrowserAuthenticationFailureHandler;
-import com.dream.start.browser.core.constant.BrowserSomeConstant;
+import com.dream.start.browser.core.authentication.handler.MyAuthenticationFailureHandler;
+import com.dream.start.browser.core.constant.BrowserLoginConstant;
 import com.dream.start.browser.core.exception.ValidateCodeException;
-import com.dream.start.browser.properties.BrowserLoginProperties;
+import com.dream.start.browser.core.properties.LoginProperties;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -29,25 +29,33 @@ import java.io.IOException;
 @Component("smsCodeValidateFilter")
 public class SmsCodeValidateFilter extends OncePerRequestFilter {
 
-    private final BrowserLoginProperties browserLoginProperties;
-    private final BrowserAuthenticationFailureHandler browserAuthenticationFailureHandler;
+    private final LoginProperties loginProperties;
+    private final MyAuthenticationFailureHandler myAuthenticationFailureHandler;
 
     @Autowired
-    public SmsCodeValidateFilter(BrowserLoginProperties browserLoginProperties, BrowserAuthenticationFailureHandler browserAuthenticationFailureHandler){
-        this.browserLoginProperties = browserLoginProperties;
-        this.browserAuthenticationFailureHandler = browserAuthenticationFailureHandler;
+    public SmsCodeValidateFilter(LoginProperties loginProperties, MyAuthenticationFailureHandler myAuthenticationFailureHandler){
+        this.loginProperties = loginProperties;
+        this.myAuthenticationFailureHandler = myAuthenticationFailureHandler;
     }
 
+    /**
+     * 短信验证码过滤器
+     *
+     * @param httpServletRequest
+     * @param httpServletResponse
+     * @param filterChain
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = httpServletRequest.getRequestURI();
         String method = httpServletRequest.getMethod();
-        if(requestURI.equals(browserLoginProperties.getMobileForm()) &&
-                method.equalsIgnoreCase(HttpMethod.POST.name())){
+        if(requestURI.equals(loginProperties.getMobileForm()) && method.equalsIgnoreCase(HttpMethod.POST.name())){
             try {
                 doValidate(httpServletRequest);
             } catch (AuthenticationException e) {
-                browserAuthenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, e);
+                myAuthenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, e);
                 log.error("短信验证码校验失败，异常信息:{}", Throwables.getStackTraceAsString(e));
                 return;
             }
@@ -61,12 +69,13 @@ public class SmsCodeValidateFilter extends OncePerRequestFilter {
             throw new ValidateCodeException("短信验证码不能为空");
         }
         HttpSession session = request.getSession();
-        String sessionCode = (String) session.getAttribute(BrowserSomeConstant.SESSION_SMS_CODE_KEY);
+        String sessionCode = (String) session.getAttribute(BrowserLoginConstant.SESSION_SMS_CODE_KEY);
         if(StringUtils.isBlank(sessionCode)){
             throw new ValidateCodeException("短信验证码已过期");
         }
         if(!code.equals(sessionCode)){
             throw new ValidateCodeException("短信验证码不正确");
         }
+        session.removeAttribute(BrowserLoginConstant.SESSION_SMS_CODE_KEY);
     }
 }

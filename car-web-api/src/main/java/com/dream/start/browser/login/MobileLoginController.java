@@ -1,10 +1,9 @@
 package com.dream.start.browser.login;
 
 import com.dream.start.browser.core.code.service.SmsSendService;
-import com.dream.start.browser.core.constant.BrowserSomeConstant;
+import com.dream.start.browser.core.constant.BrowserLoginConstant;
 import com.dream.start.browser.core.utils.ResultUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +44,7 @@ public class MobileLoginController {
             return failure;
         }
         String code = RandomStringUtils.randomNumeric(4);
-        request.getSession().setAttribute(BrowserSomeConstant.SESSION_SMS_CODE_KEY, code);
+        request.getSession().setAttribute(BrowserLoginConstant.SESSION_SMS_CODE_KEY, code);
         aliSmsSendService.smsSend(mobile, code);
         ResultUtil<Object> success = ResultUtil.success(null);
         return success;

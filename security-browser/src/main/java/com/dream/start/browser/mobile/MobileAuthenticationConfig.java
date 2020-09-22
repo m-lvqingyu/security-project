@@ -1,8 +1,8 @@
 package com.dream.start.browser.mobile;
 
-import com.dream.start.browser.authentication.BrowserAuthenticationFailureHandler;
-import com.dream.start.browser.authentication.BrowserAuthenticationSuccessHandler;
-import com.dream.start.browser.service.MobileUserDetailsService;
+import com.dream.start.browser.core.authentication.handler.MyAuthenticationFailureHandler;
+import com.dream.start.browser.core.authentication.handler.MyAuthenticationSuccessHandler;
+import com.dream.start.browser.users.MobileUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
@@ -21,16 +21,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class MobileAuthenticationConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
-    private final BrowserAuthenticationSuccessHandler browserAuthenticationSuccessHandler;
-    private final BrowserAuthenticationFailureHandler browserAuthenticationFailureHandler;
+    private final MyAuthenticationSuccessHandler myAuthenticationSuccessHandler;
+    private final MyAuthenticationFailureHandler myAuthenticationFailureHandler;
     private final MobileUserDetailsService mobileUserDetailsService;
 
     @Autowired
-    public MobileAuthenticationConfig(BrowserAuthenticationSuccessHandler browserAuthenticationSuccessHandler,
-                                      BrowserAuthenticationFailureHandler browserAuthenticationFailureHandler,
+    public MobileAuthenticationConfig(MyAuthenticationSuccessHandler myAuthenticationSuccessHandler,
+                                      MyAuthenticationFailureHandler myAuthenticationFailureHandler,
                                       MobileUserDetailsService mobileUserDetailsService) {
-        this.browserAuthenticationFailureHandler = browserAuthenticationFailureHandler;
-        this.browserAuthenticationSuccessHandler = browserAuthenticationSuccessHandler;
+        this.myAuthenticationFailureHandler = myAuthenticationFailureHandler;
+        this.myAuthenticationSuccessHandler = myAuthenticationSuccessHandler;
         this.mobileUserDetailsService = mobileUserDetailsService;
     }
 
@@ -43,8 +43,8 @@ public class MobileAuthenticationConfig extends SecurityConfigurerAdapter<Defaul
         // 所以与用户名和密码登录，使用CompositeSessionAuthenticationStrategy即可
         mobileAuthenticationFilter.setSessionAuthenticationStrategy(builder.getSharedObject(SessionAuthenticationStrategy.class));
         mobileAuthenticationFilter.setAuthenticationManager(builder.getSharedObject(AuthenticationManager.class));
-        mobileAuthenticationFilter.setAuthenticationSuccessHandler(browserAuthenticationSuccessHandler);
-        mobileAuthenticationFilter.setAuthenticationFailureHandler(browserAuthenticationFailureHandler);
+        mobileAuthenticationFilter.setAuthenticationSuccessHandler(myAuthenticationSuccessHandler);
+        mobileAuthenticationFilter.setAuthenticationFailureHandler(myAuthenticationFailureHandler);
 
         MobileAuthenticationProvider provider = new MobileAuthenticationProvider();
         provider.setUserDetailsService(mobileUserDetailsService);

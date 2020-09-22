@@ -1,6 +1,6 @@
 package com.dream.start.browser.session;
 
-import com.dream.start.browser.authentication.BrowserAuthenticationFailureHandler;
+import com.dream.start.browser.core.authentication.handler.MyAuthenticationFailureHandler;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +23,19 @@ import java.io.IOException;
 @Component("browserExpiredSessionStrategy")
 public class BrowserExpiredSessionStrategy implements SessionInformationExpiredStrategy {
 
+    private final MyAuthenticationFailureHandler myAuthenticationFailureHandler;
+
     @Autowired
-    private BrowserAuthenticationFailureHandler browserAuthenticationFailureHandler;
+    public BrowserExpiredSessionStrategy(MyAuthenticationFailureHandler myAuthenticationFailureHandler){
+        this.myAuthenticationFailureHandler = myAuthenticationFailureHandler;
+    }
 
     @Override
     public void onExpiredSessionDetected(SessionInformationExpiredEvent sessionInformationExpiredEvent) throws IOException {
         AuthenticationException exception = new AuthenticationServiceException("账户已在其它计算机登录");
         try {
             sessionInformationExpiredEvent.getRequest().setAttribute("toAuthentication", true);
-            browserAuthenticationFailureHandler.onAuthenticationFailure(
+            myAuthenticationFailureHandler.onAuthenticationFailure(
                     sessionInformationExpiredEvent.getRequest(),
                     sessionInformationExpiredEvent.getResponse(),
                     exception);

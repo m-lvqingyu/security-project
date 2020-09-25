@@ -30,7 +30,7 @@ public class TSysUserInfoService {
                 .andStatusEqualTo(UserInfoStatus.EFFECTIVE.getIndex())
                 .andDelFlagEqualTo(UserInfoDelFlag.EFFECTIVE.getIndex());
         List<TSysUserInfo> infoList = tSysUserInfoMapper.selectByExample(example);
-        if(infoList == null || !infoList.isEmpty()){
+        if(infoList == null || infoList.isEmpty()){
             return null;
         }
         return infoList.get(0);

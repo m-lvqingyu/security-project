@@ -42,17 +42,7 @@ public class MyAuthenticationFailureHandler extends SimpleUrlAuthenticationFailu
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(objectMapper.writeValueAsString(failure));
         } else {
-            Object toAuthentication = request.getAttribute("toAuthentication");
-            String loginPage = loginProperties.getLoginPage();
-            String referer = request.getHeader("Referer");
-            if(toAuthentication != null){
-                super.setDefaultFailureUrl(loginPage + "?error");
-            } else if(StringUtils.isBlank(referer)) {
-                super.setDefaultFailureUrl(loginPage);
-            } else {
-                referer = StringUtils.substringBefore(referer, "?");
-                super.setDefaultFailureUrl(referer + "?error");
-            }
+            super.setDefaultFailureUrl(loginProperties.getLoginPage()+"?error");
             super.onAuthenticationFailure(request, response, exception);
         }
     }

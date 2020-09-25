@@ -24,7 +24,7 @@ import java.io.IOException;
  */
 @Slf4j
 @Controller
-public class CustomLoginController {
+public class UserNameAndPasswordLoginController {
 
     @Autowired
     private ValidateCodeService validateCodeService;
@@ -41,6 +41,7 @@ public class CustomLoginController {
     public void codeImage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ImageCodeBO imageCode = validateCodeService.createImageCode();
         BufferedImage image = imageCode.getImage();
+        imageCode.setImage(null);
         request.getSession().setAttribute(BrowserLoginConstant.SESSION_IMAGE_CODE_KEY, imageCode);
         ServletOutputStream outputStream = response.getOutputStream();
         ImageIO.write(image, BrowserLoginConstant.IMAGE_JPG_FORMAT_NAME, outputStream);

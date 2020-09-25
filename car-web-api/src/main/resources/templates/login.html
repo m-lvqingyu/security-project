@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!--suppress ALL-->
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
@@ -7,13 +6,15 @@
     <title>SSO-统一权限管理系统</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Font Awesome -->
-    <link th:href="@{/plugins/fontawesome-free/css/all.min.css}" rel="stylesheet" href="../plugins/fontawesome-free/css/all.min.css">
+    <!-- Font Awesome  -->
+    <link th:href="@{/plugins/fontawesome-free/css/all.min.css}" rel="stylesheet"
+          href="../plugins/fontawesome-free/css/all.min.css">
     <!-- Ionicons -->
     <!-- <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"> -->
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- overlayScrollbars -->
-    <link th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}" rel="stylesheet" href="../plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+    <link th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}" rel="stylesheet"
+          href="../plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
     <!-- Theme style -->
     <link th:href="@{/dist/css/adminlte.min.css}" rel="stylesheet" href="../dist/css/adminlte.min.css">
     <!-- Google Font: Source Sans Pro -->
@@ -22,7 +23,7 @@
 <body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
-        <a href="#">SSO统一权限管理</a>
+        <a href="#">SSO一权限管理</a>
     </div>
     <!-- /.login-logo -->
     <div class="card">
@@ -57,9 +58,6 @@
                     <div class="col-6">
                         <img onclick="this.src='/code/image?'+Math.random()" src="/code/image" alt="验证码"/>
                     </div>
-                </div>
-                <div th:if="${param.error}">
-                    <span th:text="${session.SPRING_SECURITY_LAST_EXCEPTION?.message}" style="color:#ff0000">用户名或密码错误</span>
                 </div>
                 <div class="row">
                     <div class="col-8">

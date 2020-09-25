@@ -104,7 +104,8 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordParameter(defaultLoginPassword)
                 .successHandler(myAuthenticationSuccessHandler)
                 .failureHandler(myAuthenticationFailureHandler)
-                .and().authorizeRequests().antMatchers(defaultLoginPage, defaultCodeImage, defaultMobileLoginUrl, defaultCodeSms).permitAll()
+                .and()
+                .authorizeRequests().antMatchers(defaultLoginPage, defaultCodeImage, defaultMobileLoginUrl, defaultCodeSms).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 // Session失效后处理
@@ -113,6 +114,8 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 .maximumSessions(1).expiredSessionStrategy(browserExpiredSessionStrategy)
                 // 同一用户只能在一台计算机上登录，未退出时，不允许登录
                 .maxSessionsPreventsLogin(true);
+        http.csrf().disable();
         http.apply(mobileAuthenticationConfig);
+
     }
 }
